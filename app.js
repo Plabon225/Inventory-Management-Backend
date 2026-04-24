@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 // Basic Library Import
 import express from 'express';
 import router from './src/routes/api.js';
@@ -8,14 +11,15 @@ import rateLimit from "express-rate-limit";
 import helmet from 'helmet';
 import hpp from 'hpp';
 import cors from 'cors';
-import mongoSanitize from 'express-mongo-sanitize'
+// import mongoSanitize from 'express-mongo-sanitize'
 
 // Database Import
 import mongoose from 'mongoose';
 
-import {DATABASE_URL, REQUEST_NUMBER, REQUEST_TIME} from "./src/config/config.js";
+import {REQUEST_NUMBER, REQUEST_TIME} from "./src/config/config.js";
 
 const app = express();
+const DATABASE_URL = process.env.DATABASE_URL;
 
 // Security Middleware Implement
 app.use(cors());

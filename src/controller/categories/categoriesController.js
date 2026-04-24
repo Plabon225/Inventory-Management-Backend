@@ -1,8 +1,11 @@
-import CategoriesModel from "../models/categories/CategoriesModel.js";
-import createService from "../services/common/CreateService.js";
-import listService from "../services/common/ListService.js";
-import dropDownService from "../services/common/DropDownService.js";
-import updateService from "../services/common/UpdateService.js";
+import CategoriesModel from "../../models/categories/categoriesModel.js";
+import createService from "../../services/common/CreateService.js";
+import listService from "../../services/common/ListService.js";
+import dropDownService from "../../services/common/DropDownService.js";
+import updateService from "../../services/common/UpdateService.js";
+import checkAssociateService from "../../services/common/checkAssociateService.js";
+import ProductModel from "../../models/products/productsModel.js";
+import deleteService from "../../services/common/deleteService.js";
 
 
 export const CreateCategory  = async (req, res) => {
@@ -60,6 +63,28 @@ export const CategoryDropDown = async (req, res) => {
 
         const result = await dropDownService(userEmail, CategoriesModel, projection);
 
+        const statusCode = result.status === "fail" ? 400 : 200;
+        return res.status(statusCode).json(result);
+
+    } catch (error) {
+        return res.status(500).json({status: "fail", message: error.message});
+    }
+};
+
+export const DeleteCategory = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userEmail = req.user;
+        const check = await checkAssociateService(
+            id,
+            userEmail,
+            ProductModel,
+            "categoryId"
+        );
+        if (check.status === "fail") {
+            return res.status(400).json({status: "fail", message: "Category is already used in Product"});
+        }
+        const result = await deleteService(id, userEmail, CategoriesModel);
         const statusCode = result.status === "fail" ? 400 : 200;
         return res.status(statusCode).json(result);
 

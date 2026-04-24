@@ -1,8 +1,11 @@
-import SuppliersModel from "../models/suppliers/suppliersModel.js"
-import createService from "../services/common/CreateService.js";
-import listService from "../services/common/ListService.js";
-import dropDownService from "../services/common/DropDownService.js";
-import updateService from "../services/common/UpdateService.js";
+import SuppliersModel from "../../models/suppliers/suppliersModel.js"
+import createService from "../../services/common/CreateService.js";
+import listService from "../../services/common/ListService.js";
+import dropDownService from "../../services/common/DropDownService.js";
+import updateService from "../../services/common/UpdateService.js";
+import checkAssociateService from "../../services/common/checkAssociateService.js";
+import PurchaseModel from "../../models/purchase/purchaseModel.js";
+import deleteService from "../../services/common/deleteService.js";
 
 
 export const CreateSuppliers = async (req, res) => {
@@ -32,7 +35,6 @@ export const UpdateSuppliers = async (req, res) => {
     }
 };
 
-
 export const SuppliersList = async (req, res) => {
     try {
         const pageNo = Number(req.query.pageNo) || 1;
@@ -52,8 +54,6 @@ export const SuppliersList = async (req, res) => {
     }
 };
 
-
-
 export const SuppliersDropDown = async (req, res) => {
     try {
         const userEmail = req.user;
@@ -61,6 +61,28 @@ export const SuppliersDropDown = async (req, res) => {
 
         const result = await dropDownService(userEmail, SuppliersModel, projection);
 
+        const statusCode = result.status === "fail" ? 400 : 200;
+        return res.status(statusCode).json(result);
+
+    } catch (error) {
+        return res.status(500).json({status: "fail", message: error.message});
+    }
+};
+
+export const DeleteSupplier = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userEmail = req.user;
+        const check = await checkAssociateService(
+            id,
+            userEmail,
+            PurchaseModel,
+            "supplierID"
+        );
+        if (check.status === "fail") {
+            return res.status(400).json({status: "fail", message: "Supplier is already used in purchase"});
+        }
+        const result = await deleteService(id, userEmail, SupplierModel);
         const statusCode = result.status === "fail" ? 400 : 200;
         return res.status(statusCode).json(result);
 

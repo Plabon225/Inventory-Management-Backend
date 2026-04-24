@@ -1,8 +1,12 @@
-import CustomersModel from "../models/customers/customersModel.js"
-import createService from "../services/common/CreateService.js";
-import listService from "../services/common/ListService.js";
-import dropDownService from "../services/common/DropDownService.js";
-import updateService from "../services/common/UpdateService.js";
+import CustomersModel from "../../models/customers/customersModel.js"
+import createService from "../../services/common/CreateService.js";
+import listService from "../../services/common/ListService.js";
+import dropDownService from "../../services/common/DropDownService.js";
+import updateService from "../../services/common/UpdateService.js";
+import checkAssociateService from "../../services/common/checkAssociateService.js";
+import deleteService from "../../services/common/deleteService.js";
+import SalesModel from "../../models/sales/salesModel.js";
+import SalesReturnModel from "../../models/returns/SalesReturnModel.js";
 
 
 export const CreateCustomers = async (req, res) => {
@@ -56,13 +60,43 @@ export const CustomersList = async (req, res) => {
 export const CustomersDropDown = async (req, res) => {
     try {
         const userEmail = req.user;
-        const projection = {_id: 1, name: 1};
+        const projection = {_id: 1, customerName: 1};
 
         const result = await dropDownService(userEmail, CustomersModel, projection);
 
         const statusCode = result.status === "fail" ? 400 : 200;
         return res.status(statusCode).json(result);
 
+    } catch (error) {
+        return res.status(500).json({status: "fail", message: error.message});
+    }
+};
+
+export const DeleteCustomer = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userEmail = req.user;
+        const salesCheck = await checkAssociateService(
+            id,
+            userEmail,
+            SalesModel,
+            "customerId"
+        );
+        if (salesCheck.status === "fail") {
+            return res.status(400).json({status: "fail", message: "Customer is already used in sales"});
+        }
+        const returnCheck = await checkAssociateService(
+            id,
+            userEmail,
+            SalesReturnModel,
+            "customerId"
+        );
+        if (returnCheck.status === "fail") {
+            return res.status(400).json({status: "fail", message: "Customer is already used in sales return"});
+        }
+        const result = await deleteService(id, userEmail, CustomersModel);
+        const statusCode = result.status === "fail" ? 400 : 200;
+        return res.status(statusCode).json(result);
     } catch (error) {
         return res.status(500).json({status: "fail", message: error.message});
     }

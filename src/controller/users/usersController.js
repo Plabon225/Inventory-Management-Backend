@@ -1,12 +1,12 @@
-import createUserService from "../services/user/userCreateService.js";
-import userDetailsService from "../services/user/userDetailsService.js";
-import userLoginService from "../services/user/userLoginService.js";
-import userUpdateService from "../services/user/userUpdateService.js";
-import userVerifyEmailService from "../services/user/userVerifyEmailService.js";
-import userVerifyOtpService from "../services/user/userVerifyOtpService.js";
-import resetPasswordService from "../services/user/userResetService.js";
-import UsersModel from "../models/user/UsersModel.js";
-import OTPModel from "../models/user/OTPModel.js";
+import createUserService from "../../services/user/userCreateService.js";
+import userDetailsService from "../../services/user/userDetailsService.js";
+import userLoginService from "../../services/user/userLoginService.js";
+import userUpdateService from "../../services/user/userUpdateService.js";
+import userVerifyEmailService from "../../services/user/userVerifyEmailService.js";
+import userVerifyOtpService from "../../services/user/userVerifyOtpService.js";
+import resetPasswordService from "../../services/user/userResetService.js";
+import UsersModel from "../../models/user/UsersModel.js";
+import OTPModel from "../../models/user/OTPModel.js";
 
 export const registration = async (req, res) => {
     try {

@@ -7,7 +7,6 @@ const ExpenseSchema = new mongoose.Schema({
     note: { type: String, default: "" },
     expenseDate: { type: Date, default: Date.now },
     status: { type: String, enum: ["active", "deleted"], default: "active" },
-    createdDate: { type: Date, default: Date.now }
 }, { versionKey: false, timestamps: true });
 
 // Index for faster query
