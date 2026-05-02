@@ -5,6 +5,7 @@ import listService from "../../services/common/ListService.js";
 import deleteService from "../../services/common/deleteService.js";
 import expenseReportService from "../../services/report/expenseReportService.js";
 import expenseSummaryService from "../../services/summary/expenseSummaryService.js";
+import detailsByIDService from "../../services/common/detailsByIDService.js";
 
 export const CreateExpense = async (req, res) => {
     try {
@@ -17,7 +18,6 @@ export const CreateExpense = async (req, res) => {
         return res.status(500).json({status: "fail", message: err.message});
     }
 };
-
 
 export const UpdateExpense = async (req, res) => {
     try {
@@ -96,6 +96,26 @@ export const ExpenseSummary = async (req, res) => {
     try {
         const userEmail = req.user;
         const result = await expenseSummaryService(userEmail);
+        const statusCode = result.status === "fail" ? 400 : 200;
+        return res.status(statusCode).json(result);
+
+    } catch (error) {
+        return res.status(500).json({status: "fail", message: error.message});
+    }
+};
+
+export const ExpenseDetailsByID = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userEmail = req.user;
+        const result = await detailsByIDService(
+            id,
+            userEmail,
+            ExpenseModel,
+            [
+                { path: "typeId", select: "name description" }
+            ]
+        );
         const statusCode = result.status === "fail" ? 400 : 200;
         return res.status(statusCode).json(result);
 

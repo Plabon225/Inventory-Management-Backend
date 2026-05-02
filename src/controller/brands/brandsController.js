@@ -6,6 +6,7 @@ import dropDownService from "../../services/common/DropDownService.js";
 import checkAssociateService from "../../services/common/checkAssociateService.js";
 import ProductModel from "../../models/products/productsModel.js";
 import deleteService from "../../services/common/deleteService.js";
+import detailsByIDService from "../../services/common/detailsByIDService.js";
 
 export const CreateBrand = async (req, res) => {
     try {
@@ -83,6 +84,26 @@ export const DeleteBrand = async (req, res) => {
             return res.status(400).json({status: "fail", message: "Brand is already used in Product"});
         }
         const result = await deleteService(id, userEmail, BrandsModel);
+        const statusCode = result.status === "fail" ? 400 : 200;
+        return res.status(statusCode).json(result);
+
+    } catch (error) {
+        return res.status(500).json({status: "fail", message: error.message});
+    }
+};
+
+export const BrandDetailsByID = async (req, res) => {
+    try {
+
+        const id = req.params.id;
+        const userEmail = req.user;
+
+        const result = await detailsByIDService(
+            id,
+            userEmail,
+            BrandsModel
+        );
+
         const statusCode = result.status === "fail" ? 400 : 200;
         return res.status(statusCode).json(result);
 

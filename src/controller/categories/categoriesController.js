@@ -6,6 +6,7 @@ import updateService from "../../services/common/UpdateService.js";
 import checkAssociateService from "../../services/common/checkAssociateService.js";
 import ProductModel from "../../models/products/productsModel.js";
 import deleteService from "../../services/common/deleteService.js";
+import detailsByIDService from "../../services/common/detailsByIDService.js";
 
 
 export const CreateCategory  = async (req, res) => {
@@ -85,6 +86,26 @@ export const DeleteCategory = async (req, res) => {
             return res.status(400).json({status: "fail", message: "Category is already used in Product"});
         }
         const result = await deleteService(id, userEmail, CategoriesModel);
+        const statusCode = result.status === "fail" ? 400 : 200;
+        return res.status(statusCode).json(result);
+
+    } catch (error) {
+        return res.status(500).json({status: "fail", message: error.message});
+    }
+};
+
+export const CategoryDetailsByID = async (req, res) => {
+    try {
+
+        const id = req.params.id;
+        const userEmail = req.user;
+
+        const result = await detailsByIDService(
+            id,
+            userEmail,
+            CategoriesModel
+        );
+
         const statusCode = result.status === "fail" ? 400 : 200;
         return res.status(statusCode).json(result);
 

@@ -7,6 +7,8 @@ import PurchaseProductModel from "../../models/purchase/purchaseProductModel.js"
 import SalesReturnProductModel from "../../models/returns/SalesReturnProductModel.js";
 import SalesProductModel from "../../models/sales/salesProductModel.js";
 import deleteService from "../../services/common/deleteService.js";
+import detailsByIDService from "../../services/common/detailsByIDService.js";
+
 
 export const CreateProducts = async (req, res) => {
     try {
@@ -34,7 +36,6 @@ export const UpdateProducts = async (req, res) => {
         return res.status(500).json({status: "fail", message: error.message});
     }
 };
-
 
 export const ProductList = async (req, res) => {
     try {
@@ -74,7 +75,6 @@ export const ProductList = async (req, res) => {
     }
 };
 
-
 export const DeleteProduct = async (req, res) => {
     try {
         const id = req.params.id;
@@ -108,6 +108,27 @@ export const DeleteProduct = async (req, res) => {
         }
 
         const result = await deleteService(id, userEmail, ProductsModel);
+        const statusCode = result.status === "fail" ? 400 : 200;
+        return res.status(statusCode).json(result);
+
+    } catch (error) {
+        return res.status(500).json({status: "fail", message: error.message});
+    }
+};
+
+export const ProductDetailsByID = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userEmail = req.user;
+        const result = await detailsByIDService(
+            id,
+            userEmail,
+            ProductsModel,
+            [
+                { path: "brandId", select: "name" },
+                { path: "categoryId", select: "name" }
+            ]
+        );
         const statusCode = result.status === "fail" ? 400 : 200;
         return res.status(statusCode).json(result);
 

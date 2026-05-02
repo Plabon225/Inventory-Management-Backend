@@ -3,6 +3,8 @@ import createService from "../../services/common/CreateService.js";
 import updateService from "../../services/common/UpdateService.js";
 import listService from "../../services/common/ListService.js";
 import dropDownService from "../../services/common/DropDownService.js";
+import detailsByIDService from "../../services/common/detailsByIDService.js";
+import ExpenseModel from "../../models/expenses/expenseModel.js";
 
 export const CreateExpenseTypes = async (req, res) => {
     try {
@@ -15,7 +17,6 @@ export const CreateExpenseTypes = async (req, res) => {
         return res.status(500).json({status: "fail", message: err.message});
     }
 };
-
 
 export const UpdateExpenseTypes = async (req, res) => {
     try {
@@ -51,7 +52,6 @@ export const ExpenseTypesList = async (req, res) => {
     }
 };
 
-
 export const ExpenseTypesDropDown = async (req, res) => {
     try {
         const userEmail = req.user;
@@ -59,6 +59,24 @@ export const ExpenseTypesDropDown = async (req, res) => {
 
         const result = await dropDownService(userEmail, ExpenseTypesModel, projection);
 
+        const statusCode = result.status === "fail" ? 400 : 200;
+        return res.status(statusCode).json(result);
+
+    } catch (error) {
+        return res.status(500).json({status: "fail", message: error.message});
+    }
+};
+
+
+export const ExpenseTypesDetailsByID = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userEmail = req.user;
+        const result = await detailsByIDService(
+            id,
+            userEmail,
+            ExpenseTypesModel
+        );
         const statusCode = result.status === "fail" ? 400 : 200;
         return res.status(statusCode).json(result);
 

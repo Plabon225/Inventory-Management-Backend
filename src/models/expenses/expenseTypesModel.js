@@ -11,6 +11,6 @@ const ExpenseTypeSchema = new mongoose.Schema({
 
 ExpenseTypeSchema.index({ userEmail: 1, name: 1 }, { unique: true });
 
-const ExpenseTypesModel = mongoose.model("expensetypes", ExpenseTypeSchema);
+const ExpenseTypesModel = mongoose.model("expenseTypes", ExpenseTypeSchema);
 
 export default ExpenseTypesModel;

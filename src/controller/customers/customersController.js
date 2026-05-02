@@ -7,6 +7,7 @@ import checkAssociateService from "../../services/common/checkAssociateService.j
 import deleteService from "../../services/common/deleteService.js";
 import SalesModel from "../../models/sales/salesModel.js";
 import SalesReturnModel from "../../models/returns/SalesReturnModel.js";
+import detailsByIDService from "../../services/common/detailsByIDService.js";
 
 
 export const CreateCustomers = async (req, res) => {
@@ -36,7 +37,6 @@ export const UpdateCustomers = async (req, res) => {
     }
 };
 
-
 export const CustomersList = async (req, res) => {
     try {
         const pageNo = Number(req.query.pageNo) || 1;
@@ -55,7 +55,6 @@ export const CustomersList = async (req, res) => {
         return res.status(500).json({status: "fail", message: error.message});
     }
 };
-
 
 export const CustomersDropDown = async (req, res) => {
     try {
@@ -97,6 +96,23 @@ export const DeleteCustomer = async (req, res) => {
         const result = await deleteService(id, userEmail, CustomersModel);
         const statusCode = result.status === "fail" ? 400 : 200;
         return res.status(statusCode).json(result);
+    } catch (error) {
+        return res.status(500).json({status: "fail", message: error.message});
+    }
+};
+
+export const CustomerDetailsByID = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userEmail = req.user;
+        const result = await detailsByIDService(
+            id,
+            userEmail,
+            CustomersModel
+        );
+        const statusCode = result.status === "fail" ? 400 : 200;
+        return res.status(statusCode).json(result);
+
     } catch (error) {
         return res.status(500).json({status: "fail", message: error.message});
     }
